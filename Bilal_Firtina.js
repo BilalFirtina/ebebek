@@ -52,26 +52,29 @@ gatheredProducts.innerHTML = `
    if (width >= 992) return { numberOfItemsInRow: 3, widthOfItem: 316.663 };
    return { numberOfItemsInRow: 2, widthOfItem: 355 };
 }
-let { numberOfItemsInRow, widthOfItem } = applyResponsiveDesign();
 
+let numberOfItemsInRow, widthOfItem;
+({ numberOfItemsInRow, widthOfItem } = applyResponsiveDesign());
 
 // Fetching products from link
 async function getProducts() {
-  if (!products) {
-    try {
-      const result = await fetch("https://gist.githubusercontent.com/sevindi/8bcbde9f02c1d4abe112809c974e1f49/raw/9bf93b58df623a9b16f1db721cd0a7a539296cf0/products.json");
-      products = await result.json();
-      //We upload products to localstorage
-      localStorage.setItem("products", JSON.stringify(products));
+  if (products.length === 0) {
+      try {
+        const result = await fetch(
+          "https://gist.githubusercontent.com/sevindi/8bcbde9f02c1d4abe112809c974e1f49/raw/9bf93b58df623a9b16f1db721cd0a7a539296cf0/products.json"
+        );
+        products = await result.json();
+        //We upload products to localstorage
+        localStorage.setItem("products", JSON.stringify(products));
+        createCarousel(products);
+      } catch (error) {
+        console.log(error.message);
+        alert("Products could not be loaded. Please try again.");
+        return;
+      }
+    } else {
       createCarousel(products);
-    } catch (error) {
-      console.log(error.message);
-      alert("Products could not be loaded. Please try again.");
-      return;
     }
-  } else {
-    createCarousel(products);
-  }
 }
 
 getProducts();
